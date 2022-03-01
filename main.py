@@ -17,7 +17,7 @@ def main():
     #try and with statement that turns RESTCLIENT(key) to object client
     try:
         with RESTClient(key) as client:
-            #checks information from yesterday
+            #Gets information from yesterday to today
             resp = client.stocks_equities_aggregates(str(ticker), multiplier=1, timespan="day", from_=(now - datetime.timedelta(days=5)), to=(now - datetime.timedelta(days=4)), adjusted='true')
             change = ((float(resp.results[1]['c'])-float(resp.results[0]['c']))/(float(resp.results[1]['c'])+float(resp.results[0]['c'])))*100
             if change > 0:
@@ -29,13 +29,8 @@ def main():
             print('Current price %s. No change in stock' % (resp.results[1]['c']))
     #Erro handling
     except Exception as e:
-        error = e.__class__.__name__
-        if error == 'HTTPError':
-            print('Invalid ticker, try again.')
-            main()
-        else:
-            print(error)
         print(e)
+        main()
 
 #initialize function
 if __name__ == '__main__':
