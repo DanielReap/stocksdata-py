@@ -27,7 +27,7 @@ def main():
                 print('Current price %s. Your stock has decreased %s%s' % (resp.results[1]['c'], '%', change))
                 exit()
             print('Current price %s. No change in stock' % (resp.results[1]['c']))
-    #Erro handling
+    #Error handling
     except Exception as e:
         print(e)
         main()
