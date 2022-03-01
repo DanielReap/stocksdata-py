@@ -18,22 +18,24 @@ def main():
     try:
         with RESTClient(key) as client:
             #checks information from yesterday
-            resp = client.stocks_equities_daily_open_close(str(ticker), (now - datetime.timedelta(days=1)))
-            #prints variables given from the response
-            print(vars(resp))
-            #print(f"On: {resp.from_} Apple opened at {resp.open} and closed at {resp.close}")
-    #if an error occurs, define it as e
+            resp = client.stocks_equities_aggregates(str(ticker), multiplier=1, timespan="day", from_=(now - datetime.timedelta(days=5)), to=(now - datetime.timedelta(days=4)), adjusted='true')
+            change = ((float(resp.results[1]['c'])-float(resp.results[0]['c']))/(float(resp.results[1]['c'])+float(resp.results[0]['c'])))*100
+            if change > 0:
+                print('Current price %s. Your stock has increased %s%s' % (resp.results[1]['c'], '%', change))
+                exit()
+            if change < 0:
+                print('Current price %s. Your stock has decreased %s%s' % (resp.results[1]['c'], '%', change))
+                exit()
+            print('Current price %s. No change in stock' % (resp.results[1]['c']))
+    #Erro handling
     except Exception as e:
-        #gets the class of the error // type of error
         error = e.__class__.__name__
-        #if HTTP error, invalid ticker is the issue
         if error == 'HTTPError':
-            #re-run program so user can re-enter the ticker
             print('Invalid ticker, try again.')
             main()
         else:
-            #print error type if it is not an HTTPError
             print(error)
+        print(e)
 
 #initialize function
 if __name__ == '__main__':
